@@ -18,6 +18,9 @@ pytest = "~7.3"
 pre-commit = "~3.2"
 isort = "~5.12"
 
+[tool.isort]
+profile = "black"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

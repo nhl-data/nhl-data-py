@@ -1,4 +1,5 @@
 import logging
+from http import HTTPMethod
 
 import httpx
 
@@ -20,3 +21,34 @@ class HttpClient:
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         self.client.close()
+
+    def request(
+        self, method: HTTPMethod, endpoint: str, url_parameters: dict = None
+    ) -> dict | list:
+        """
+        Performs a HTTP Request to the specified endpoint.
+
+        :param method: the specific request type we want to send
+        :param endpoint: endpoint we want to send the request to
+        :param url_parameters: any additional parameters to add for the request,
+            defaults to None
+        :return: the JSON response from the request
+        """
+        response = self.client.request(method, endpoint, params=url_parameters)
+        return self._handle_response(response)
+
+    def _handle_response(self, response: httpx.Response) -> dict | list:
+        if self.raise_status_errors:
+            if response.status_code >= 500:
+                raise HttpServerError(response.status_code)
+            elif response.status_code >= 400:
+                raise HttpClientError(response.status_code)
+        return response.json()
+
+
+class HttpClientError(Exception):
+    pass
+
+
+class HttpServerError(Exception):
+    pass
