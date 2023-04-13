@@ -5,16 +5,31 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
+  - repo: local
     hooks:
       - id: black
-        language_version: python3.11
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
-    hooks:
+        name: black
+        entry: black
+        language: system
+        fail_fast: true
+        files: ".py$"
       - id: flake8
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
+        name: flake8
+        entry: flake8
+        language: system
+        fail_fast: true
+        files: ".py$"
       - id: isort
+        name: isort
+        entry: isort
+        language: system
+        fail_fast: true
+        files: ".py$"
+      - id: pytest
+        name: pytest
+        entry: pytest tests
+        language: system
+        fail_fast: true
+        always_run: true
+        pass_filenames: false
+        stages: [push]

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Python API Wrapper over NHL APIs"
 authors = ["Kyle Kohnen <git@kylekohnen.com>"]
 readme = "README.md"
-packages = [{include = "nhl_data_py"}]
+packages = [{include = "nhl_data"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
