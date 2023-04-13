@@ -45,6 +45,20 @@ class HttpClient:
                 raise HttpClientError(response.status_code)
         return response.json()
 
+    def get(self, endpoint: str, url_parameters: dict = None) -> dict | list:
+        """
+        Performs a GET Request to the specified endpoint.
+
+        :param method: the specific request type we want to send
+        :param endpoint: endpoint we want to send the request to
+        :param url_parameters: any additional parameters to add for the request,
+            defaults to None
+        :return: the JSON response from the request
+        """
+        return self.request(
+            HTTPMethod.GET, endpoint=endpoint, url_parameters=url_parameters
+        )
+
 
 class HttpClientError(Exception):
     pass

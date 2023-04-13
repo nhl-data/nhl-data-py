@@ -20,6 +20,18 @@ def test_request():
     assert result == expected
 
 
+def test_get():
+    expected = {"random": "value"}
+    mock_response = Mock()
+    mock_response.request.return_value = httpx.Response(
+        status_code=200, json={"random": "value"}
+    )
+    with HttpClient(TEST_URL) as c:
+        c.client = mock_response
+        result = c.get("/")
+    assert result == expected
+
+
 @pytest.mark.parametrize(("status"), [400, 500])
 def test_status_error_raise_exception(status):
     error = HttpServerError if status >= 500 else HttpClientError
