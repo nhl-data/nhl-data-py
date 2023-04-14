@@ -17,7 +17,8 @@ def test_request():
     with HttpClient(TEST_URL) as c:
         c.client = mock_response
         result = c.request("GET", "/")
-    assert result == expected
+    assert result.status_code == 200
+    assert result.json() == expected
 
 
 def test_get():
@@ -29,7 +30,8 @@ def test_get():
     with HttpClient(TEST_URL) as c:
         c.client = mock_response
         result = c.get("/")
-    assert result == expected
+    assert result.status_code == 200
+    assert result.json() == expected
 
 
 @pytest.mark.parametrize(("status"), [400, 500])
@@ -44,8 +46,7 @@ def test_status_error_raise_exception(status):
 @pytest.mark.parametrize(("status"), [400, 500])
 def test_status_error_dont_raise_exception(status):
     data = {"show_up": "even_on_error"}
-    response = Mock(status_code=status)
-    response.json.return_value = data
+    response = httpx.Response(status_code=status, json=data)
     with HttpClient(TEST_URL, raise_status_errors=False) as c:
         val = c._handle_response(response)
-    assert val == data
+    assert val.json() == data

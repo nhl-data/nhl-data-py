@@ -24,7 +24,7 @@ class HttpClient:
 
     def request(
         self, method: HTTPMethod, endpoint: str, url_parameters: dict = None
-    ) -> dict | list:
+    ) -> httpx.Response:
         """
         Performs a HTTP Request to the specified endpoint.
 
@@ -32,7 +32,7 @@ class HttpClient:
         :param endpoint: endpoint we want to send the request to
         :param url_parameters: any additional parameters to add for the request,
             defaults to None
-        :return: the JSON response from the request
+        :return: the response object
         """
         response = self.client.request(method, endpoint, params=url_parameters)
         return self._handle_response(response)
@@ -43,9 +43,9 @@ class HttpClient:
                 raise HttpServerError(response.status_code)
             elif response.status_code >= 400:
                 raise HttpClientError(response.status_code)
-        return response.json()
+        return response
 
-    def get(self, endpoint: str, url_parameters: dict = None) -> dict | list:
+    def get(self, endpoint: str, url_parameters: dict = None) -> httpx.Response:
         """
         Performs a GET Request to the specified endpoint.
 
