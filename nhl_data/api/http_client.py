@@ -1,7 +1,7 @@
 import logging
 from http import HTTPMethod
 
-import httpx
+from httpx import Client, Response
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class HttpClient:
     def __init__(self, base_url: str, raise_status_errors: bool = True) -> None:
         self.base_url = base_url
         self.raise_status_errors = raise_status_errors
-        self.client = httpx.Client(base_url=self.base_url, timeout=10)
+        self.client = Client(base_url=self.base_url, timeout=10)
 
     def __enter__(self):
         return self
@@ -24,7 +24,7 @@ class HttpClient:
 
     def request(
         self, method: HTTPMethod, endpoint: str, url_parameters: dict = None
-    ) -> httpx.Response:
+    ) -> Response:
         """
         Performs a HTTP Request to the specified endpoint.
 
@@ -37,7 +37,7 @@ class HttpClient:
         response = self.client.request(method, endpoint, params=url_parameters)
         return self._handle_response(response)
 
-    def _handle_response(self, response: httpx.Response) -> dict | list:
+    def _handle_response(self, response: Response) -> dict | list:
         if self.raise_status_errors:
             if response.status_code >= 500:
                 raise HttpServerError(response.status_code)
@@ -45,7 +45,7 @@ class HttpClient:
                 raise HttpClientError(response.status_code)
         return response
 
-    def get(self, endpoint: str, url_parameters: dict = None) -> httpx.Response:
+    def get(self, endpoint: str, url_parameters: dict = None) -> Response:
         """
         Performs a GET Request to the specified endpoint.
 
