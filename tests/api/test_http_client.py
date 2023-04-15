@@ -10,12 +10,12 @@ TEST_URL = "https://testing.com"
 
 def test_request():
     expected = {"random_key": "random_value"}
-    mock_response = Mock()
-    mock_response.request.return_value = httpx.Response(
+    mock_client = Mock()
+    mock_client.request.return_value = httpx.Response(
         status_code=200, json={"random_key": "random_value"}
     )
     with HttpClient(TEST_URL) as c:
-        c.client = mock_response
+        c.client = mock_client
         result = c.request("GET", "/")
     assert result.status_code == 200
     assert result.json() == expected
@@ -23,12 +23,12 @@ def test_request():
 
 def test_get():
     expected = {"random": "value"}
-    mock_response = Mock()
-    mock_response.request.return_value = httpx.Response(
+    mock_client = Mock()
+    mock_client.request.return_value = httpx.Response(
         status_code=200, json={"random": "value"}
     )
     with HttpClient(TEST_URL) as c:
-        c.client = mock_response
+        c.client = mock_client
         result = c.get("/")
     assert result.status_code == 200
     assert result.json() == expected

@@ -31,3 +31,16 @@ class StatsNhlApi:
         with HttpClient(self.base_url) as client:
             response = client.request(method, endpoint, url_parameters)
         return response.json()
+
+    def get(self, endpoint: str, url_parameters: dict = None) -> dict | list:
+        """
+        Sends a GET request to the Stats NHL API.
+
+        :param endpoint: the endpoint we want to send the request to
+        :param url_parameters: ny additional parameters to add for the request,
+            defaults to None
+        :return: the JSON response from the request
+        """
+        with HttpClient(self.base_url) as client:
+            response = client.get(endpoint, url_parameters)
+        return response.json()
