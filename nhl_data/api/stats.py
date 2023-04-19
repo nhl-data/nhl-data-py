@@ -10,10 +10,10 @@ from nhl_data.api.http_client import HttpClient
 class StatsNhlApi:
     """Wrapper for the Stats NHL API."""
 
-    base_url = "https://statsapi.web.nhl.com/api"
+    base_domain = "https://statsapi.web.nhl.com"
 
     def __init__(self, api_version=1) -> None:
-        self.url = f"{self.base_url}/v{api_version}"
+        self.base_url = f"{self.base_domain}/api/v{api_version}"
         self.version = api_version
 
     def request(
@@ -44,3 +44,8 @@ class StatsNhlApi:
         with HttpClient(self.base_url) as client:
             response = client.get(endpoint, url_parameters)
         return response.json()
+
+    def teams(self, team_ids: list = []) -> list:
+        params = {"teamId": ",".join(team_ids)}
+        response = self.get("/teams", url_parameters=params)
+        return response.get("teams")
