@@ -5,6 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
+from nhl_data.models.team import Team
 
 
 class StatsNhlApi:
@@ -45,7 +46,7 @@ class StatsNhlApi:
             response = client.get(endpoint, url_parameters)
         return response.json()
 
-    def teams(self, team_ids: list = []) -> list:
-        params = {"teamId": ",".join(team_ids)}
+    def teams(self, team_ids: list = []) -> list[Team]:
+        params = {"teamId": ",".join([str(x) for x in team_ids])}
         response = self.get("/teams", url_parameters=params)
-        return response.get("teams")
+        return [Team.from_response(t) for t in response.get("teams")]

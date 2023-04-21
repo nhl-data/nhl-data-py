@@ -7,7 +7,7 @@ class Model(ABC):
     """
 
     @abstractmethod
-    def from_json(cls, data: dict):  # pragma: no cover
+    def from_response(cls, data: dict):  # pragma: no cover
         """
         Helper function which removes specific keywords / fields from the
         response data depending on the Model, and incorporates other models
