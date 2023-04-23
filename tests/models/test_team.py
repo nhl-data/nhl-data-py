@@ -1,8 +1,8 @@
 import pytest
 
-from nhl_data.models.team import Team
+from nhl_data.models.team import Team, TeamRecord
 
-test_cases = {
+team_test_cases = {
     "short_team": (
         {"id": 1, "name": "The NHL Team"},
         Team(id=1, name="The NHL Team"),
@@ -13,8 +13,26 @@ test_cases = {
 
 
 @pytest.mark.parametrize(
-    ("test_data", "expected"), test_cases.values(), ids=test_cases.keys()
+    ("test_data", "expected"), team_test_cases.values(), ids=team_test_cases.keys()
 )
 def test_team_from_response_json(test_data, expected):
     result = Team.from_response(test_data)
+    assert result == expected
+
+
+record_cases = {
+    "short_team": (
+        {"points": 100},
+        TeamRecord(points=100),
+    ),
+    "empty_data": (dict(), TeamRecord()),
+    "data_from_camel_case": ({"regulationWins": 50}, TeamRecord(regulation_wins=50)),
+}
+
+
+@pytest.mark.parametrize(
+    ("test_data", "expected"), record_cases.values(), ids=record_cases.keys()
+)
+def test_team_record_from_response_json(test_data, expected):
+    result = TeamRecord.from_response(test_data)
     assert result == expected

@@ -47,6 +47,10 @@ class StatsNhlApi:
         return response.json()
 
     def teams(self, team_ids: list = []) -> list[Team]:
-        params = {"teamId": ",".join([str(x) for x in team_ids])}
+        expands = ["team.record"]
+        params = {
+            "teamId": ",".join([str(x) for x in team_ids]),
+            "expand": ",".join(expands),
+        }
         response = self.get("/teams", url_parameters=params)
         return [Team.from_response(t) for t in response.get("teams")]
