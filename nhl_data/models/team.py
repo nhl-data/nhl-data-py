@@ -27,6 +27,7 @@ class Team(Model):
     conference: dict = None
     franchise: dict = None
     team_stats: list = None
+    team_leaders: list[TeamLeader] = None
     short_name: str = None
     record: TeamRecord = None
     official_site_url: str = None
@@ -37,6 +38,11 @@ class Team(Model):
         data = convert_keys_to_snake_case(data)
         record_data = (
             TeamRecord.from_response(data.get("record")) if "record" in data else None
+        )
+        team_leaders = (
+            [TeamLeader.from_response(d) for d in data.get("team_leaders")]
+            if "team_leaders" in data
+            else None
         )
         return cls(
             id=data.get("id"),
@@ -51,6 +57,7 @@ class Team(Model):
             conference=data.get("conference"),
             franchise=data.get("franchise"),
             team_stats=data.get("teamStats"),
+            team_leaders=team_leaders,
             short_name=data.get("shortName"),
             record=record_data,
             official_site_url=data.get("official_site_url"),
@@ -121,4 +128,32 @@ class TeamRecord(Model):
             pp_conference_rank=data.get("pp_conference_rank"),
             pp_league_rank=data.get("pp_league_rank"),
             last_updated=data.get("last_updated"),
+        )
+
+
+@dataclass(frozen=True)
+class TeamLeader(Model):
+    """Represents the Leaders for a specific stat."""
+
+    leader_category: str = None
+    depth: str = None
+    player_status: str = None
+    season: str = None
+    game_type: dict = None
+    limits: dict = None
+    limit_metadata: dict = None
+    leaders: list[dict] = None
+
+    @classmethod
+    def from_response(cls, json_response: dict) -> TeamLeader:
+        data = convert_keys_to_snake_case(json_response)
+        return cls(
+            leader_category=data.get("leader_category"),
+            depth=data.get("depth"),
+            player_status=data.get("player_status"),
+            season=data.get("season"),
+            game_type=data.get("game_type"),
+            limits=data.get("limits"),
+            limit_metadata=data.get("limit_metadata"),
+            leaders=data.get("leaders"),
         )

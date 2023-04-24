@@ -47,10 +47,16 @@ class StatsNhlApi:
         return response.json()
 
     def teams(self, team_ids: list = []) -> list[Team]:
-        expands = ["team.record"]
-        params = {
-            "teamId": ",".join([str(x) for x in team_ids]),
-            "expand": ",".join(expands),
-        }
-        response = self.get("/teams", url_parameters=params)
+        expands = ["team.record", "team.leaders"]
+        with HttpClient(self.base_url) as client:
+            leader_categories = [
+                stat.get("displayName")
+                for stat in client.get("/leagueLeaderTypes").json()
+            ]
+            params = {
+                "teamId": ",".join([str(x) for x in team_ids]),
+                "expand": ",".join(expands),
+                "leaderCategories": ",".join(leader_categories),
+            }
+            response = client.get("/teams", url_parameters=params).json()
         return [Team.from_response(t) for t in response.get("teams")]

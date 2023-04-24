@@ -1,6 +1,6 @@
 import pytest
 
-from nhl_data.models.team import Team, TeamRecord
+from nhl_data.models.team import Team, TeamLeader, TeamRecord
 
 team_test_cases = {
     "short_team": (
@@ -35,4 +35,25 @@ record_cases = {
 )
 def test_team_record_from_response_json(test_data, expected):
     result = TeamRecord.from_response(test_data)
+    assert result == expected
+
+
+leader_cases = {
+    "short_team": (
+        {"season": "some_season"},
+        TeamLeader(season="some_season"),
+    ),
+    "empty_data": (dict(), TeamLeader()),
+    "data_from_camel_case": (
+        {"leaderCategory": "some_category"},
+        TeamLeader(leader_category="some_category"),
+    ),
+}
+
+
+@pytest.mark.parametrize(
+    ("test_data", "expected"), leader_cases.values(), ids=leader_cases.keys()
+)
+def test_team_leader_from_response_json(test_data, expected):
+    result = TeamLeader.from_response(test_data)
     assert result == expected
