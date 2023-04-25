@@ -46,8 +46,11 @@ class StatsNhlApi:
             response = client.get(endpoint, url_parameters)
         return response.json()
 
-    def teams(self, team_ids: list = []) -> list[Team]:
+    def teams(self, team_ids: list = [], season_start_year: int = None) -> list[Team]:
         expands = ["team.record", "team.leaders", "team.roster"]
+        season = (
+            f"{season_start_year}{season_start_year+1}" if season_start_year else None
+        )
         with HttpClient(self.base_url) as client:
             leader_categories = [
                 stat.get("displayName")
@@ -57,6 +60,9 @@ class StatsNhlApi:
                 "teamId": ",".join([str(x) for x in team_ids]),
                 "expand": ",".join(expands),
                 "leaderCategories": ",".join(leader_categories),
+                "season": season,
             }
+            if season is None:
+                del params["season"]
             response = client.get("/teams", url_parameters=params).json()
         return [Team.from_response(t) for t in response.get("teams")]
