@@ -47,6 +47,24 @@ class StatsNhlApi:
         return response.json()
 
     def teams(self, team_ids: list = [], season_start_year: int = None) -> list[Team]:
+        """
+        Pulls data from the `teams` endpoint. This method expands some of the endpoints
+        that are normally not included. This includes:
+
+        - leaders
+        - records
+        - roster
+
+        If `team_ids` is not specified, it will pull data from every single team.
+        If `season_start_year` is not specified, it will pull data from the
+        current season.
+
+        :param team_ids: the specific teams we want to pull,
+            defaults to pulling every team
+        :param season_start_year: the season we want to pull from,
+            defaults to pulling from the current season
+        :return: team data represented in custom models
+        """
         expands = ["team.record", "team.leaders", "team.roster"]
         season = (
             f"{season_start_year}{season_start_year+1}" if season_start_year else None
