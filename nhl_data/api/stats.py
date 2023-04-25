@@ -5,15 +5,16 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
+from nhl_data.models.team import Team
 
 
 class StatsNhlApi:
     """Wrapper for the Stats NHL API."""
 
-    base_url = "https://statsapi.web.nhl.com/api"
+    base_domain = "https://statsapi.web.nhl.com"
 
     def __init__(self, api_version=1) -> None:
-        self.url = f"{self.base_url}/v{api_version}"
+        self.base_url = f"{self.base_domain}/api/v{api_version}"
         self.version = api_version
 
     def request(
@@ -44,3 +45,42 @@ class StatsNhlApi:
         with HttpClient(self.base_url) as client:
             response = client.get(endpoint, url_parameters)
         return response.json()
+
+    def teams(self, team_ids: list = [], season_start_year: int = None) -> list[Team]:
+        """
+        Pulls data from the `teams` endpoint. This method expands some of the endpoints
+        that are normally not included. This includes:
+
+        - leaders
+        - records
+        - roster
+
+        If `team_ids` is not specified, it will pull data from every single team.
+        If `season_start_year` is not specified, it will pull data from the
+        current season.
+
+        :param team_ids: the specific teams we want to pull,
+            defaults to pulling every team
+        :param season_start_year: the season we want to pull from,
+            defaults to pulling from the current season
+        :return: team data represented in custom models
+        """
+        expands = ["team.record", "team.leaders", "team.roster"]
+        season = (
+            f"{season_start_year}{season_start_year+1}" if season_start_year else None
+        )
+        with HttpClient(self.base_url) as client:
+            leader_categories = [
+                stat.get("displayName")
+                for stat in client.get("/leagueLeaderTypes").json()
+            ]
+            params = {
+                "teamId": ",".join([str(x) for x in team_ids]),
+                "expand": ",".join(expands),
+                "leaderCategories": ",".join(leader_categories),
+                "season": season,
+            }
+            if season is None:
+                del params["season"]
+            response = client.get("/teams", url_parameters=params).json()
+        return [Team.from_response(t) for t in response.get("teams")]
