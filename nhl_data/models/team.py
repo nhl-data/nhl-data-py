@@ -27,6 +27,7 @@ class Team(Model):
     conference: dict = None
     franchise: dict = None
     team_stats: list = None
+    roster: list[TeamRosterSpot] = None
     team_leaders: list[TeamLeader] = None
     short_name: str = None
     record: TeamRecord = None
@@ -44,6 +45,14 @@ class Team(Model):
             if "team_leaders" in data
             else None
         )
+        team_roster = (
+            [
+                TeamRosterSpot.from_response(d)
+                for d in data.get("roster", dict()).get("roster", [])
+            ]
+            if "roster" in data and "roster" in data.get("roster")
+            else None
+        )
         return cls(
             id=data.get("id"),
             name=data.get("name"),
@@ -57,6 +66,7 @@ class Team(Model):
             conference=data.get("conference"),
             franchise=data.get("franchise"),
             team_stats=data.get("teamStats"),
+            roster=team_roster,
             team_leaders=team_leaders,
             short_name=data.get("shortName"),
             record=record_data,
@@ -156,4 +166,20 @@ class TeamLeader(Model):
             limits=data.get("limits"),
             limit_metadata=data.get("limit_metadata"),
             leaders=data.get("leaders"),
+        )
+
+
+@dataclass(frozen=True)
+class TeamRosterSpot(Model):
+    person: dict[str, str | int] = None
+    jersey_number: str = None
+    position: dict[str, str] = None
+
+    @classmethod
+    def from_response(cls, json_response: dict) -> TeamRosterSpot:
+        data = convert_keys_to_snake_case(json_response)
+        return cls(
+            person=data.get("person"),
+            jersey_number=data.get("jersey_number"),
+            position=data.get("position"),
         )

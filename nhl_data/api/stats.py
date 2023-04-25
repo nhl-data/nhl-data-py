@@ -47,7 +47,7 @@ class StatsNhlApi:
         return response.json()
 
     def teams(self, team_ids: list = []) -> list[Team]:
-        expands = ["team.record", "team.leaders"]
+        expands = ["team.record", "team.leaders", "team.roster"]
         with HttpClient(self.base_url) as client:
             leader_categories = [
                 stat.get("displayName")
