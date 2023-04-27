@@ -32,7 +32,7 @@ class Game(Model):
     decisions: dict = None
 
     @classmethod
-    def from_request(cls, request_data: dict):
+    def from_response(cls, request_data: dict):
         data = convert_keys_to_snake_case(request_data)
         game_data, live_data = data.get("game_data", dict()), data.get(
             "live_data", dict()
