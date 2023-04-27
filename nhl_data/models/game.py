@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from nhl_data.models.base import Model
+from nhl_data.models.team import Team
 from nhl_data.models.utils import convert_keys_to_snake_case
 
 
@@ -19,8 +20,8 @@ class Game(Model):
     coded_game_state: str = None
     detailed_state: str = None
     status_code: str = None
-    away: dict = None
-    home: dict = None
+    away_team: Team = None
+    home_team: Team = None
     players: dict = None
     venue: dict = None
     all_plays: list = None
@@ -49,6 +50,12 @@ class Game(Model):
             coded_game_state=game_data.get("status", dict()).get("coded_game_state"),
             detailed_state=game_data.get("status", dict()).get("detailed_state"),
             status_code=game_data.get("status", dict()).get("status_code"),
+            away_team=Team.from_response(game_data.get("teams", dict()).get("away"))
+            if "away" in game_data.get("teams", dict())
+            else None,
+            home_team=Team.from_response(game_data.get("teams", dict()).get("home"))
+            if "home" in game_data.get("teams", dict())
+            else None,
             players=game_data.get("players"),
             venue=game_data.get("venue"),
             all_plays=live_data.get("plays", dict()).get("all_plays"),
