@@ -1,6 +1,6 @@
 import pytest
 
-from nhl_data.models.game import Game, Play
+from nhl_data.models.game import Boxscore, Game, Play
 from nhl_data.models.team import Team
 
 game_test_cases = {
@@ -50,4 +50,27 @@ play_test_cases = {
 )
 def test_play_from_response(test_data, expected):
     result = Play.from_response(test_data)
+    assert result == expected
+
+
+boxscore_test_cases = {
+    "short_boxscore": (
+        {"teams": {"away": {"goalies": [123456]}}},
+        Boxscore(away_goalies=[123456]),
+    ),
+    "empty_data": (dict(), Boxscore()),
+    "team_within_boxscore": (
+        {"teams": {"away": {"team": {"id": 1, "name": "Team"}}}},
+        Boxscore(away_team=Team(id=1, name="Team")),
+    ),
+}
+
+
+@pytest.mark.parametrize(
+    ("test_data", "expected"),
+    boxscore_test_cases.values(),
+    ids=boxscore_test_cases.keys(),
+)
+def test_boxscore_from_response(test_data, expected):
+    result = Boxscore.from_response(test_data)
     assert result == expected

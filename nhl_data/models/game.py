@@ -72,7 +72,9 @@ class Game(Model):
             current_play=Play.from_response(plays_data["current_play"])
             if "current_play" in plays_data
             else None,
-            boxscore=live_data.get("boxscore"),
+            boxscore=Boxscore.from_response(live_data["boxscore"])
+            if "boxscore" in live_data
+            else None,
             decisions=live_data.get("decisions"),
         )
 
@@ -130,4 +132,58 @@ class Play(Model):
             goals_home=about_data.get("goals", dict()).get("home"),
             coordinates=data.get("coordinates"),
             team=Team.from_response(data["team"]) if "team" in data else None,
+        )
+
+
+@dataclass
+class Boxscore(Model):
+    """
+    Represents and contains boxscore data for a given game, returned from the NHL API.
+    """
+
+    away_team: Team = None
+    away_team_stats: dict = None
+    away_players: dict = None
+    away_goalies: list = None
+    away_skaters: list = None
+    away_on_ice: list = None
+    away_scratches: list = None
+    away_penalty_box: list = None
+    away_coaches: list = None
+    home_team: Team = None
+    home_team_stats: dict = None
+    home_players: dict = None
+    home_goalies: list = None
+    home_skaters: list = None
+    home_on_ice: list = None
+    home_scratches: list = None
+    home_penalty_box: list = None
+    home_coaches: list = None
+    officials: list = None
+
+    @classmethod
+    def from_response(cls, request_data: dict):
+        data = convert_keys_to_snake_case(request_data)
+        away = data.get("teams", dict()).get("away", dict())
+        home = data.get("teams", dict()).get("home", dict())
+        return cls(
+            away_team=Team.from_response(away.get("team")) if "team" in away else None,
+            away_team_stats=away.get("team_stats", dict()).get("team_skater_stats"),
+            away_players=away.get("players"),
+            away_goalies=away.get("goalies"),
+            away_skaters=away.get("skaters"),
+            away_on_ice=away.get("on_ice_plus"),
+            away_scratches=away.get("scratches"),
+            away_penalty_box=away.get("penalty_box"),
+            away_coaches=away.get("coaches"),
+            home_team=Team.from_response(home.get("team")) if "team" in home else None,
+            home_team_stats=home.get("team_stats", dict()).get("team_skater_stats"),
+            home_players=home.get("players"),
+            home_goalies=home.get("goalies"),
+            home_skaters=home.get("skaters"),
+            home_on_ice=home.get("on_ice_plus"),
+            home_scratches=home.get("scratches"),
+            home_penalty_box=home.get("penalty_box"),
+            home_coaches=home.get("coaches"),
+            officials=data.get("officials"),
         )
