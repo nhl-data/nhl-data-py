@@ -86,11 +86,24 @@ class StatsNhlApi:
         return [Team.from_response(t) for t in response.get("teams")]
 
     def game(self, game_id: int) -> Game:
+        """
+        Pulls data from the `game` endpoint. This method specific retrieves the live
+        feed data for a specific game.
+
+        :param game_id: the specific game we want to look at
+        :return: all game data for a specific game
+        """
         url = f"/game/{game_id}/feed/live"
         game_data = self.get(url)
         return Game.from_response(game_data)
 
     def seasons(self) -> list[Season]:
+        """
+        Pulls data from the `seasons` endpoint.
+
+        :return: summary data for every season in the NHL, represented as a list
+            of Season models
+        """
         url = "/seasons"
         seasons_data = self.get(url).get("seasons", [])
         return [Season.from_response(data) for data in seasons_data]
