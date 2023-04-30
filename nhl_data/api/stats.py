@@ -5,7 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
-from nhl_data.models import Game, Team
+from nhl_data.models import Game, Season, Team
 
 
 class StatsNhlApi:
@@ -89,3 +89,8 @@ class StatsNhlApi:
         url = f"/game/{game_id}/feed/live"
         game_data = self.get(url)
         return Game.from_response(game_data)
+
+    def seasons(self) -> list[Season]:
+        url = "/seasons"
+        seasons_data = self.get(url).get("seasons", [])
+        return [Season.from_response(data) for data in seasons_data]
