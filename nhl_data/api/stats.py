@@ -5,7 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
-from nhl_data.models import Game, Season, Team
+from nhl_data.models import Game, ScheduleDate, Season, Team
 
 
 class StatsNhlApi:
@@ -107,3 +107,42 @@ class StatsNhlApi:
         url = "/seasons"
         seasons_data = self.get(url).get("seasons", [])
         return [Season.from_response(data) for data in seasons_data]
+
+    def schedule(
+        self,
+        team_ids: list[int] = None,
+        season: int = None,
+        start_date: str = None,
+        end_date: str = None,
+    ) -> list[ScheduleDate]:
+        """
+        Pulls data from the `schedule` endpoint. This method fetches data containing
+        general information about various games / events from different dates.
+
+        If `team_ids` is specified, then the method will filter to all dates containing
+        the specified teams. If nothing is specified, then it searches for all teams.
+
+        If `season` is specified, then the method will search for dates in the specified
+        season. If nothing is specified, then it searches for the current season.
+
+        If `start_date` AND `end_date` is specified, then the method will find
+        all the games in the specified date range. If one or both are missing,
+        it searches for current day's games.
+
+        :param team_ids: specific teams we want search for, defaults to None
+        :param season: specific season we want to search on, defaults to None
+        :param start_date: the beginning of a date range we want to search on,
+            defaults to None
+        :param end_date: the end of a date range we want to search on, default to None
+        :return: list of ScheduleDate models which contains summary data for each date
+            retrieved
+        """
+        url = "/schedule"
+        params = {
+            "teamId": ",".join(str(x) for x in team_ids) if team_ids else None,
+            "startDate": start_date,
+            "endDate": end_date,
+            "season": f"{season}{season+1}" if season else None,
+        }
+        data = self.get(url, url_parameters=params).get("dates", [])
+        return [ScheduleDate.from_response(d) for d in data]
