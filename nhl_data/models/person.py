@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from dataclasses import dataclass
 
 from nhl_data.models.base import Model
@@ -18,7 +19,7 @@ class Person(Model):
     first_name: str = None
     last_name: str = None
     primary_number: str = None
-    birth_date: str = None
+    birth_date: datetime.date = None
     current_age: int = None
     birth_city: str = None
     birth_state_province: str = None
@@ -44,7 +45,9 @@ class Person(Model):
             first_name=data.get("first_name"),
             last_name=data.get("last_name"),
             primary_number=data.get("primary_number"),
-            birth_date=data.get("birth_date"),
+            birth_date=datetime.datetime.strptime(data["birth_date"], "%Y-%m-%d").date()
+            if "birth_date" in data
+            else None,
             current_age=data.get("current_age"),
             birth_city=data.get("birth_city"),
             birth_state_province=data.get("birth_state_province"),

@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 
 from nhl_data.models.person import Person
@@ -9,7 +11,7 @@ person_cases = {
     "first_name": ({"firstName": "Wayne"}, Person(first_name="Wayne")),
     "last_name": ({"lastName": "Gretzky"}, Person(last_name="Gretzky")),
     "primary_number": ({"primaryNumber": "99"}, Person(primary_number="99")),
-    "birth_date": ({"birthDate": "2000-01-01"}, Person(birth_date="2000-01-01")),
+    "birth_date": ({"birthDate": "2000-01-01"}, Person(birth_date=date(2000, 1, 1))),
     "current_age": ({"currentAge": 99}, Person(current_age=99)),
     "birth_city": ({"birthCity": "Wonderland"}, Person(birth_city="Wonderland")),
     "birth_state_province": (
