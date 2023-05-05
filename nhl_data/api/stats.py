@@ -149,5 +149,6 @@ class StatsNhlApi:
 
     def people(self, person_id: int) -> Person:
         url = f"/people/{person_id}"
-        data = self.get(url).get("people")[0]
+        params = {"expand": "person.social"}
+        data = self.get(url, params).get("people")[0]
         return Person.from_response(data)

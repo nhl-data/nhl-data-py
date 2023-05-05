@@ -33,6 +33,10 @@ person_cases = {
         {"primaryPosition": {"code": "D"}},
         Person(primary_position={"code": "D"}),
     ),
+    "social": (
+        {"social": {"twitter": "thandle"}},
+        Person(social={"twitter": "thandle"}),
+    ),
     "empty_data": (dict(), Person()),
 }
 

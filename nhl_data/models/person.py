@@ -35,6 +35,7 @@ class Person(Model):
     roster_status: str = None
     current_team: Team = None
     primary_position: dict = None
+    social: dict = None
 
     @classmethod
     def from_response(cls, response_data: dict) -> Person:
@@ -65,4 +66,5 @@ class Person(Model):
             if "current_team" in data
             else None,
             primary_position=data.get("primary_position"),
+            social=data.get("social"),
         )
