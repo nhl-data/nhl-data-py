@@ -5,7 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
-from nhl_data.models import Game, ScheduleDate, Season, Team
+from nhl_data.models import Game, Person, ScheduleDate, Season, Team
 
 
 class StatsNhlApi:
@@ -146,3 +146,9 @@ class StatsNhlApi:
         }
         data = self.get(url, url_parameters=params).get("dates", [])
         return [ScheduleDate.from_response(d) for d in data]
+
+    def people(self, person_id: int) -> Person:
+        url = f"/people/{person_id}"
+        params = {"expand": "person.social"}
+        data = self.get(url, params).get("people")[0]
+        return Person.from_response(data)
