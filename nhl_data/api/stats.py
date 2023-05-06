@@ -149,6 +149,14 @@ class StatsNhlApi:
 
     def people(self, person_id: int) -> Person:
         url = f"/people/{person_id}"
-        params = {"expand": "person.social"}
-        data = self.get(url, params).get("people")[0]
+        with HttpClient(self.base_url) as client:
+            stat_categories = [
+                stat.get("displayName") for stat in client.get("/statTypes").json()
+            ]
+            params = {
+                "expand": "person.social,person.stats",
+                "stats": ",".join(stat_categories),
+            }
+            data = client.get(url, url_parameters=params).json()
+        data = data.get("people")[0]
         return Person.from_response(data)
