@@ -160,3 +160,17 @@ class StatsNhlApi:
             data = client.get(url, url_parameters=params).json()
         data = data.get("people")[0]
         return Person.from_response(data)
+
+    def stat_types(self) -> list[str]:
+        """
+        Retrieves a list of all stat types that can searched for from the NHL API.
+
+        :return: list of strings representing the stat types that are queryable
+        """
+        url = "/statTypes"
+        data = [
+            stat["displayName"]
+            for stat in self.get(url)
+            if stat.get("displayName") is not None
+        ]
+        return data
