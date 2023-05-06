@@ -4,6 +4,7 @@ import datetime
 from dataclasses import dataclass
 
 from nhl_data.models.base import Model
+from nhl_data.models.stat import Stat
 from nhl_data.models.team import Team
 from nhl_data.models.utils import convert_keys_to_snake_case
 
@@ -36,7 +37,7 @@ class Person(Model):
     current_team: Team = None
     primary_position: dict = None
     social: dict = None
-    stats: list = None
+    stats: list[Stat] = None
 
     @classmethod
     def from_response(cls, response_data: dict) -> Person:
@@ -68,5 +69,7 @@ class Person(Model):
             else None,
             primary_position=data.get("primary_position"),
             social=data.get("social"),
-            stats=data.get("stats"),
+            stats=[Stat.from_response(d) for d in data["stats"]]
+            if "stats" in data
+            else None,
         )
