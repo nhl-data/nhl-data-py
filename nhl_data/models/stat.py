@@ -19,6 +19,6 @@ class Stat(Model):
     def from_response(cls, data: dict):
         data = convert_keys_to_snake_case(data)
         return cls(
-            stat_type=data.get("type", dict()).get("displayName"),
+            stat_type=data.get("type", dict()).get("display_name"),
             splits=data.get("splits"),
         )

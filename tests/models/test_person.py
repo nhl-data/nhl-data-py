@@ -46,6 +46,6 @@ person_cases = {
     person_cases.values(),
     ids=person_cases.keys(),
 )
-def test_schedule_date_from_resposne(test_data, expected):
+def test_person_from_resposne(test_data, expected):
     result = Person.from_response(test_data)
     assert result == expected
