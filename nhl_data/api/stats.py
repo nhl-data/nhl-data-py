@@ -149,16 +149,29 @@ class StatsNhlApi:
 
     def people(self, person_id: int) -> Person:
         url = f"/people/{person_id}"
-        with HttpClient(self.base_url) as client:
-            stat_categories = [
-                stat.get("displayName") for stat in client.get("/statTypes").json()
-            ]
-            params = {
-                "expand": "person.social,person.stats",
-                "stats": ",".join(stat_categories),
-            }
-            data = client.get(url, url_parameters=params).json()
-        data = data.get("people")[0]
+        stats_to_query = [
+            "yearByYear",
+            "yearByYearPlayoffs",
+            "careerRegularSeason",
+            "careerPlayoffs",
+            "gameLog",
+            "playoffGameLog",
+            "winLoss",
+            "winLossPlayoffs",
+            "homeAndAway",
+            "homeAndAwayPlayoffs",
+            "byMonth",
+            "byMonthPlayoffs",
+            "byDayOfWeek",
+            "byDayOfWeekPlayoffs",
+            "goalsByGameSituation",
+            "goalsByGameSituationPlayoffs",
+        ]
+        params = {
+            "expand": "person.social,person.stats",
+            "stats": ",".join(stats_to_query),
+        }
+        data = self.get(url, params).get("people")[0]
         return Person.from_response(data)
 
     def stat_types(self) -> list[str]:

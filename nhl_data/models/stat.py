@@ -15,6 +15,7 @@ class Stat(Model):
     stat_type: str = None
     splits: list[dict] = None
 
+    @classmethod
     def from_response(cls, data: dict):
         data = convert_keys_to_snake_case(data)
         return cls(
