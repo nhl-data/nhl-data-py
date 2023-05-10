@@ -148,6 +148,19 @@ class StatsNhlApi:
         return [ScheduleDate.from_response(d) for d in data]
 
     def people(self, person_id: int, season_start_year: int) -> Person:
+        """
+        Pulls data from the `people` endpoint. This method fetches data containing
+        general information, stats, and other misc. information.
+
+        If `season_start_year` is specified, then the method will search for
+        season specific stats in that specific year. Otherwise, it will search for
+        the current season.
+
+        :param person_id: the specific person we want to search for
+        :param season_start_year: the season start year of the season specific stats,
+            defaults to None
+        :return: Person model containing all data for a specific person
+        """
         url = f"/people/{person_id}"
         stats_to_query = [
             "yearByYear",
