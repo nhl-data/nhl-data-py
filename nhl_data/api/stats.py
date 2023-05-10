@@ -147,8 +147,59 @@ class StatsNhlApi:
         data = self.get(url, url_parameters=params).get("dates", [])
         return [ScheduleDate.from_response(d) for d in data]
 
-    def people(self, person_id: int) -> Person:
+    def people(self, person_id: int, season_start_year: int) -> Person:
+        """
+        Pulls data from the `people` endpoint. This method fetches data containing
+        general information, stats, and other misc. information.
+
+        If `season_start_year` is specified, then the method will search for
+        season specific stats in that specific year. Otherwise, it will search for
+        the current season.
+
+        :param person_id: the specific person we want to search for
+        :param season_start_year: the season start year of the season specific stats,
+            defaults to None
+        :return: Person model containing all data for a specific person
+        """
         url = f"/people/{person_id}"
-        params = {"expand": "person.social"}
+        stats_to_query = [
+            "yearByYear",
+            "yearByYearPlayoffs",
+            "careerRegularSeason",
+            "careerPlayoffs",
+            "gameLog",
+            "playoffGameLog",
+            "winLoss",
+            "winLossPlayoffs",
+            "homeAndAway",
+            "homeAndAwayPlayoffs",
+            "byMonth",
+            "byMonthPlayoffs",
+            "byDayOfWeek",
+            "byDayOfWeekPlayoffs",
+            "goalsByGameSituation",
+            "goalsByGameSituationPlayoffs",
+        ]
+        params = {
+            "expand": "person.social,person.stats",
+            "stats": ",".join(stats_to_query),
+            "season": f"{season_start_year}{season_start_year+1}"
+            if season_start_year
+            else None,
+        }
         data = self.get(url, params).get("people")[0]
         return Person.from_response(data)
+
+    def stat_types(self) -> list[str]:
+        """
+        Retrieves a list of all stat types that can searched for from the NHL API.
+
+        :return: list of strings representing the stat types that are queryable
+        """
+        url = "/statTypes"
+        data = [
+            stat["displayName"]
+            for stat in self.get(url)
+            if stat.get("displayName") is not None
+        ]
+        return data
