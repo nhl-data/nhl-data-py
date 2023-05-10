@@ -147,7 +147,7 @@ class StatsNhlApi:
         data = self.get(url, url_parameters=params).get("dates", [])
         return [ScheduleDate.from_response(d) for d in data]
 
-    def people(self, person_id: int) -> Person:
+    def people(self, person_id: int, season_start_year: int) -> Person:
         url = f"/people/{person_id}"
         stats_to_query = [
             "yearByYear",
@@ -170,6 +170,9 @@ class StatsNhlApi:
         params = {
             "expand": "person.social,person.stats",
             "stats": ",".join(stats_to_query),
+            "season": f"{season_start_year}{season_start_year+1}"
+            if season_start_year
+            else None,
         }
         data = self.get(url, params).get("people")[0]
         return Person.from_response(data)
