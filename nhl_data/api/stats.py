@@ -5,7 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
-from nhl_data.models import Game, Person, ScheduleDate, Season, Team
+from nhl_data.models import Boxscore, Game, Person, ScheduleDate, Season, Team
 
 
 class StatsNhlApi:
@@ -87,7 +87,7 @@ class StatsNhlApi:
 
     def game(self, game_id: int) -> Game:
         """
-        Pulls data from the `game` endpoint. This method specific retrieves the live
+        Pulls data from the `game` endpoint. This method specifically retrieves the live
         feed data for a specific game.
 
         :param game_id: the specific game we want to look at
@@ -96,6 +96,18 @@ class StatsNhlApi:
         url = f"/game/{game_id}/feed/live"
         game_data = self.get(url)
         return Game.from_response(game_data)
+
+    def boxscore(self, game_id: int) -> Boxscore:
+        """
+        Pulls data from the boxscore endpoint. This method is a subset of the `game`
+        method; the `game` method pulls for the boxscore along with live data.
+
+        :param game_id: the specific game we want to look at
+        :return: all boxscore data for a specific game
+        """
+        url = f"/game/{game_id}/boxscore"
+        game_data = self.get(url)
+        return Boxscore.from_response(game_data)
 
     def seasons(self) -> list[Season]:
         """
