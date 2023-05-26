@@ -215,3 +215,15 @@ class StatsNhlApi:
             if stat.get("displayName") is not None
         ]
         return data
+
+    def standing_types(self) -> list[str]:
+        """
+        Retrieves a list of all the standing types that can be searched for from
+        the NHL API.
+
+        :return: list of strings representing all possible standing types that are
+            queryable
+        """
+        url = "/standingTypes"
+        data = [standing["name"] for standing in self.get(url) if "name" in standing]
+        return data
