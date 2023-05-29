@@ -5,7 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
-from nhl_data.models import Boxscore, Game, Person, ScheduleDate, Season, Team
+from nhl_data.models import Boxscore, Game, Person, ScheduleDate, Season, Standing, Team
 
 
 class StatsNhlApi:
@@ -201,6 +201,12 @@ class StatsNhlApi:
         }
         data = self.get(url, params).get("people")[0]
         return Person.from_response(data)
+
+    def standings(self, standing_type: str = None) -> list[Standing]:
+        url = "/standings"
+        params = {"standingsType": standing_type}
+        data = self.get(url, url_parameters=params).get("records", [])
+        return [Standing.from_response(d) for d in data]
 
     def stat_types(self) -> list[str]:
         """
