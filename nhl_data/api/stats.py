@@ -224,6 +224,6 @@ class StatsNhlApi:
         :return: list of strings representing all possible standing types that are
             queryable
         """
-        url = "/standingTypes"
+        url = "/standingsTypes"
         data = [standing["name"] for standing in self.get(url) if "name" in standing]
         return data
