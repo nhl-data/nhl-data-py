@@ -5,7 +5,7 @@ Module containing all relevant functionality related to the Stats NHL API.
 from http import HTTPMethod
 
 from nhl_data.api.http_client import HttpClient
-from nhl_data.models import Boxscore, Game, Person, ScheduleDate, Season, Team
+from nhl_data.models import Boxscore, Game, Person, ScheduleDate, Season, Standing, Team
 
 
 class StatsNhlApi:
@@ -202,6 +202,34 @@ class StatsNhlApi:
         data = self.get(url, params).get("people")[0]
         return Person.from_response(data)
 
+    def standings(
+        self, standing_type: str = None, season_start: int = None
+    ) -> list[Standing]:
+        """
+        Pulls data from the `standings` endpoint. This method fetches data containing
+        the standings in the NHL.
+
+        If `standing_type` is defined, then the method will search for the specified
+        standing type (i.e. wild card, division, etc.). Otherwise, it will search
+        for regular season / division standings by default.
+
+        If `season_start` is defined, then the method will search for the standings
+        in the specified season. Otherwise, it will search for the current season.
+
+        :param standing_type: the specific standing type we want to search by,
+            defaults to None
+        :param season_start: the start year of the season we want to look at
+            standings for, defaults to None
+        :return: list of Standing Models containing data for a specific standing
+        """
+        url = "/standings"
+        params = {
+            "standingsType": standing_type,
+            "season": f"{season_start}{season_start+1}" if season_start else None,
+        }
+        data = self.get(url, url_parameters=params).get("records", [])
+        return [Standing.from_response(d) for d in data]
+
     def stat_types(self) -> list[str]:
         """
         Retrieves a list of all stat types that can searched for from the NHL API.
@@ -214,4 +242,16 @@ class StatsNhlApi:
             for stat in self.get(url)
             if stat.get("displayName") is not None
         ]
+        return data
+
+    def standing_types(self) -> list[str]:
+        """
+        Retrieves a list of all the standing types that can be searched for from
+        the NHL API.
+
+        :return: list of strings representing all possible standing types that are
+            queryable
+        """
+        url = "/standingsTypes"
+        data = [standing["name"] for standing in self.get(url) if "name" in standing]
         return data
