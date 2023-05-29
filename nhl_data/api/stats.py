@@ -202,9 +202,31 @@ class StatsNhlApi:
         data = self.get(url, params).get("people")[0]
         return Person.from_response(data)
 
-    def standings(self, standing_type: str = None) -> list[Standing]:
+    def standings(
+        self, standing_type: str = None, season_start: int = None
+    ) -> list[Standing]:
+        """
+        Pulls data from the `standings` endpoint. This method fetches data containing
+        the standings in the NHL.
+
+        If `standing_type` is defined, then the method will search for the specified
+        standing type (i.e. wild card, division, etc.). Otherwise, it will search
+        for regular season / division standings by default.
+
+        If `season_start` is defined, then the method will search for the standings
+        in the specified season. Otherwise, it will search for the current season.
+
+        :param standing_type: the specific standing type we want to search by,
+            defaults to None
+        :param season_start: the start year of the season we want to look at
+            standings for, defaults to None
+        :return: list of Standing Models containing data for a specific standing
+        """
         url = "/standings"
-        params = {"standingsType": standing_type}
+        params = {
+            "standingsType": standing_type,
+            "season": f"{season_start}{season_start+1}" if season_start else None,
+        }
         data = self.get(url, url_parameters=params).get("records", [])
         return [Standing.from_response(d) for d in data]
 
