@@ -2,8 +2,30 @@ from datetime import date
 
 import pytest
 
-from nhl_data.models.draft import DraftPick, DraftRound, Prospect
+from nhl_data.models.draft import Draft, DraftPick, DraftRound, Prospect
 from nhl_data.models.team import Team
+
+draft_test_cases = {
+    "draft_year": (
+        {"draftYear": 2000},
+        Draft(draft_year=2000),
+    ),
+    "rounds": (
+        {"rounds": [{"roundNumber": 1}, {"roundNumber": 2}]},
+        Draft(rounds=[DraftRound(round_number=1), DraftRound(round_number=2)]),
+    ),
+}
+
+
+@pytest.mark.parametrize(
+    ("test_data", "expected"),
+    draft_test_cases.values(),
+    ids=draft_test_cases.keys(),
+)
+def test_draft_from_response(test_data, expected):
+    result = Draft.from_response(test_data)
+    assert result == expected
+
 
 draft_round_test_cases = {
     "round_number": (
