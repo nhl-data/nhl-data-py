@@ -9,6 +9,29 @@ from nhl_data.models.utils import convert_keys_to_snake_case
 
 
 @dataclass
+class DraftRound(Model):
+    """
+    Represents and contains all data for a given round in a draft,
+    returned from the NHL API.
+    """
+
+    round_number: int = None
+    round: str = None
+    picks: list[DraftPick] = None
+
+    @classmethod
+    def from_response(cls, request_data: dict):
+        data = convert_keys_to_snake_case(request_data)
+        return cls(
+            round_number=data.get("round_number"),
+            round=data.get("round"),
+            picks=[DraftPick.from_response(d) for d in data["picks"]]
+            if "picks" in data
+            else None,
+        )
+
+
+@dataclass
 class DraftPick(Model):
     """
     Represents and contains all data for a given pick in a draft,
