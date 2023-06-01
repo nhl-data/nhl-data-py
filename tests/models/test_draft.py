@@ -2,8 +2,46 @@ from datetime import date
 
 import pytest
 
-from nhl_data.models.draft import Prospect
+from nhl_data.models.draft import DraftPick, Prospect
 from nhl_data.models.team import Team
+
+draft_pick_test_cases = {
+    "year": (
+        {"year": 2000},
+        DraftPick(year=2000),
+    ),
+    "round": (
+        {"round": "1"},
+        DraftPick(round="1"),
+    ),
+    "pick_overall": (
+        {"pickOverall": 1},
+        DraftPick(pick_overall=1),
+    ),
+    "pick_in_round": (
+        {"pickInRound": 1},
+        DraftPick(pick_in_round=1),
+    ),
+    "team": (
+        {"team": {"id": 10}},
+        DraftPick(team=Team(id=10)),
+    ),
+    "prospect": (
+        {"prospect": {"id": 10}},
+        DraftPick(prospect=Prospect(id=10)),
+    ),
+}
+
+
+@pytest.mark.parametrize(
+    ("test_data", "expected"),
+    draft_pick_test_cases.values(),
+    ids=draft_pick_test_cases.keys(),
+)
+def test_draft_pick_from_response(test_data, expected):
+    result = DraftPick.from_response(test_data)
+    assert result == expected
+
 
 prospect_test_cases = {
     "id": (
@@ -58,6 +96,6 @@ prospect_test_cases = {
     prospect_test_cases.values(),
     ids=prospect_test_cases.keys(),
 )
-def test_game_from_response(test_data, expected):
+def test_prospect_from_response(test_data, expected):
     result = Prospect.from_response(test_data)
     assert result == expected
