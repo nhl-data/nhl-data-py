@@ -10,6 +10,7 @@ from nhl_data.models import (
     Draft,
     Game,
     Person,
+    Prospect,
     ScheduleDate,
     Season,
     Standing,
@@ -251,8 +252,24 @@ class StatsNhlApi:
         :return: Draft Model containing data for a specific draft
         """
         url = f"/draft/{draft_year}" if draft_year else "/draft"
-        data = self.get(url).get("drafts", {})
-        return Draft.from_response(data)
+        data = self.get(url).get("drafts")
+        return Draft.from_response(data[0]) if data else Draft()
+
+    def prospect(self, prospect_id: int = None) -> list[Prospect]:
+        """
+        Pulls data from the `draft` endpoint. This method fetches data containing
+        all draft data in the NHL.
+
+        If `prospect_id` is defined, then the method will search for the specific
+        prospect specified. Otherwise, it will search for all prospects.
+
+        :param prospect_id: the specific draft year we want to search, defaults to None
+        :return: list of Prospect Models containing detailed data for
+            prospects / upcoming players
+        """
+        url = f"/draft/prospects/{prospect_id}" if prospect_id else "/draft/prospects"
+        data = self.get(url).get("prospects", [])
+        return [Prospect.from_response(d) for d in data]
 
     def stat_types(self) -> list[str]:
         """

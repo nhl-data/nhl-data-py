@@ -1,4 +1,4 @@
-from nhl_data.models.draft import Draft
+from nhl_data.models.draft import Draft, Prospect
 from nhl_data.models.game import Boxscore, Game
 from nhl_data.models.person import Person
 from nhl_data.models.schedule import ScheduleDate
