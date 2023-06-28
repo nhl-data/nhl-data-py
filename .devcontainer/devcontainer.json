@@ -1,9 +1,6 @@
 {
 	"name": "NHL Data Python Development",
-	"build": {
-		"context": ".",
-		"dockerfile": "Dockerfile.dev"
-	},
+	"image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
 	//  Run Args
 	"runArgs": ["--name", "nhl_data_py_dev_container"],
 	// 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
@@ -26,5 +23,8 @@
 				"streetsidesoftware.code-spell-checker"
 			]
 		}
-	}
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "pip3 install poetry==1.5"
 }
