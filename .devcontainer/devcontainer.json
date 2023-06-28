@@ -16,9 +16,15 @@
 	"customizations": {
         "vscode": {
             "extensions": [
-				"ms-python.python", 
-				"njpwerner.autodocstring"
+				"ms-python.python",
+				"njpwerner.autodocstring",
+				"bungcip.better-toml",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker",
+				"GitHub.copilot",
+				"oderwat.indent-rainbow",
+				"streetsidesoftware.code-spell-checker"
 			]
-    	}
+		}
 	}
 }
