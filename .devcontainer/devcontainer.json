@@ -6,7 +6,7 @@
 	// 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
 	"features": {
 		// Basic Utilities to help with Development
-		"ghcr.io/devcontainers/features/common-utils:2": {"username": "nhl-data-dev", "configureZshAsDefaultShell": true}
+		"ghcr.io/devcontainers/features/common-utils:2": {"username": "nhl-data-dev"}
 	},
 
 	// 👇 Configure tool-specific properties.
@@ -24,6 +24,8 @@
 			]
 		}
 	},
+
+	"remoteUser": "nhl-data-dev",
 
 	// 👇 Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "sh ./.devcontainer/post_create.sh"
