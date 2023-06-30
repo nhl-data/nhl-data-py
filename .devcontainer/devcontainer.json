@@ -1,13 +1,13 @@
 {
 	"name": "NHL Data Python Development",
-	"image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+	"image": "python:3.11-bookworm",
 	//  Run Args
 	"runArgs": ["--name", "nhl_data_py_dev_container"],
 	// 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
-	// "features": {},
-
-	// 👇 Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "",
+	"features": {
+		// Basic Utilities to help with Development
+		"ghcr.io/devcontainers/features/common-utils:2": {"username": "nhl-data-dev", "configureZshAsDefaultShell": true}
+	},
 
 	// 👇 Configure tool-specific properties.
 	"customizations": {
@@ -25,6 +25,6 @@
 		}
 	},
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install poetry==1.5"
+	// 👇 Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "sh ./.devcontainer/post_create.sh"
 }
