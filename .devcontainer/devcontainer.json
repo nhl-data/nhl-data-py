@@ -1,0 +1,32 @@
+{
+	"name": "NHL Data Python Development",
+	"image": "python:3.11-bookworm",
+	//  Run Args
+	"runArgs": ["--name", "nhl_data_py_dev_container"],
+	// 👇 Features to add to the Dev Container. More info: https://containers.dev/implementors/features.
+	"features": {
+		// Basic Utilities to help with Development
+		"ghcr.io/devcontainers/features/common-utils:2": {"username": "nhl-data-dev"}
+	},
+
+	// 👇 Configure tool-specific properties.
+	"customizations": {
+        "vscode": {
+            "extensions": [
+				"ms-python.python",
+				"njpwerner.autodocstring",
+				"bungcip.better-toml",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker",
+				"GitHub.copilot",
+				"oderwat.indent-rainbow",
+				"streetsidesoftware.code-spell-checker"
+			]
+		}
+	},
+
+	"remoteUser": "nhl-data-dev",
+
+	// 👇 Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "sh ./.devcontainer/post_create.sh"
+}
