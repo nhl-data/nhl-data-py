@@ -1,7 +1,7 @@
 import logging
 from http import HTTPMethod
 
-from httpx import Client, Response
+from httpx import AsyncClient, Client, Response
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,23 @@ class HttpClient:
         return self.request(
             HTTPMethod.GET, endpoint=endpoint, url_parameters=url_parameters
         )
+
+
+class HttpClientAsync:
+    """
+    Asynchronous HTTP Client for connecting to the NHL API.
+    """
+    
+    def __init__(self, base_url: str, raise_status_errors: bool = True) -> None:
+        self.base_url = base_url
+        self.raise_status_errors = raise_status_errors
+        self.client = AsyncClient(base_url=self.base_url, timeout=10)
+    
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, exc_tb):
+        await self.client.aclose()
 
 
 class HttpClientError(Exception):
