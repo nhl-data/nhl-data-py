@@ -76,6 +76,42 @@ class HttpClientAsync:
     async def __aexit__(self, exc_type, exc_value, exc_tb):
         await self.client.aclose()
 
+    async def request(
+        self, method: HTTPMethod, endpoint: str, url_parameters: dict = None
+    ) -> Response:
+        """
+        Performs a HTTP Request to the specified endpoint.
+
+        :param method: the specific request type we want to send
+        :param endpoint: endpoint we want to send the request to
+        :param url_parameters: any additional parameters to add for the request,
+            defaults to None
+        :return: the response object
+        """
+        response = await self.client.request(method, endpoint, params=url_parameters)
+        return self._handle_response(response)
+    
+    async def _handle_response(self, response: Response) -> dict | list:
+        if self.raise_status_errors:
+            if response.status_code >= 500:
+                raise HttpServerError(response.status_code)
+            elif response.status_code >= 400:
+                raise HttpClientError(response.status_code)
+        return await response
+
+    async def get(self, endpoint: str, url_parameters: dict = None) -> Response:
+        """
+        Performs a GET Request to the specified endpoint.
+
+        :param method: the specific request type we want to send
+        :param endpoint: endpoint we want to send the request to
+        :param url_parameters: any additional parameters to add for the request,
+            defaults to None
+        :return: the JSON response from the request
+        """
+        return await self.request(
+            HTTPMethod.GET, endpoint=endpoint, url_parameters=url_parameters
+        )
 
 class HttpClientError(Exception):
     pass
