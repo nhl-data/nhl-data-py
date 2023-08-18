@@ -64,12 +64,12 @@ class HttpClientAsync:
     """
     Asynchronous HTTP Client for connecting to the NHL API.
     """
-    
+
     def __init__(self, base_url: str, raise_status_errors: bool = True) -> None:
         self.base_url = base_url
         self.raise_status_errors = raise_status_errors
         self.client = AsyncClient(base_url=self.base_url, timeout=10)
-    
+
     async def __aenter__(self):
         return self
 
@@ -89,15 +89,15 @@ class HttpClientAsync:
         :return: the response object
         """
         response = await self.client.request(method, endpoint, params=url_parameters)
-        return self._handle_response(response)
-    
+        return await self._handle_response(response)
+
     async def _handle_response(self, response: Response) -> dict | list:
         if self.raise_status_errors:
             if response.status_code >= 500:
                 raise HttpServerError(response.status_code)
             elif response.status_code >= 400:
                 raise HttpClientError(response.status_code)
-        return await response
+        return response
 
     async def get(self, endpoint: str, url_parameters: dict = None) -> Response:
         """
@@ -112,6 +112,7 @@ class HttpClientAsync:
         return await self.request(
             HTTPMethod.GET, endpoint=endpoint, url_parameters=url_parameters
         )
+
 
 class HttpClientError(Exception):
     pass

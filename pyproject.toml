@@ -9,6 +9,7 @@ packages = [{include = "nhl_data"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 httpx = "~0.23"
+pytest-asyncio = "^0.21.1"
 
 
 [tool.poetry.group.dev.dependencies]
